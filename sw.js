@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jacob-list-v11.2';
+const CACHE_NAME = 'jacob-list-v12.1';
 const ASSETS = [
   './',
   './index.html',
