@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jacob's List v12</title>
+    <title>Jacob's List v13</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,25 +14,15 @@
     <style>
         body { background-color: #000000; color: #ffffff; font-family: -apple-system, sans-serif; margin: 0; padding: 20px 20px 180px 20px; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        /* HEADER STYLES */
+        /* HEADER */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; margin-top: 20px; }
-        h1 { margin: 0; font-size: 24px; font-weight: 800; color: white; } /* Force White Text */
-        
+        h1 { margin: 0; font-size: 24px; font-weight: 800; color: white; }
         .header-controls { display: flex; align-items: center; gap: 8px; }
 
         .icon-btn { background: #1c1c1e; color: #0A84FF; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 20px; display: flex; justify-content: center; align-items: center; font-weight: bold; cursor: pointer; }
         .mic-btn { color: #FF9500; background: rgba(255, 149, 0, 0.2); }
         .scan-btn { color: #FFD60A; background: rgba(255, 214, 10, 0.2); }
-        
-        /* FORCE SHARE BUTTON VISIBILITY */
-        .share-btn { 
-            display: flex !important; 
-            opacity: 1 !important; 
-            visibility: visible !important;
-            color: #32D74B !important; 
-            background: rgba(50, 215, 75, 0.2) !important; 
-        } 
-        
+        .share-btn { display: flex !important; opacity: 1 !important; visibility: visible !important; color: #32D74B !important; background: rgba(50, 215, 75, 0.2) !important; } 
         .settings-btn { color: #8e8e93; background: #2c2c2e; } 
         .mic-active { background: #FF9500 !important; color: white !important; animation: pulse 1s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
@@ -100,7 +90,7 @@
 <body>
 
     <div class="header">
-        <h1>Jacob's List v12</h1>
+        <h1>Jacob's List v13</h1>
         <div class="header-controls">
             <button class="icon-btn mic-btn" id="micBtn" onclick="startDictation()">🎤</button>
             <button class="icon-btn scan-btn" onclick="startScanner()">⚡️</button>
@@ -172,7 +162,7 @@
                     <div class="backup-actions"><button class="action-btn copy-btn" onclick="copyBackup()">Copy Backup</button><button class="action-btn load-backup-btn" onclick="loadBackup()">Load from Code</button></div>
                 </div>
                 <button class="action-btn" style="background:#FF453A; color:white; width:100%;" onclick="clearAll()">Clear Entire List</button>
-                <p style="text-align:center; color:#666; font-size:12px; margin-top:20px;">Jacob's List v12</p>
+                <p style="text-align:center; color:#666; font-size:12px; margin-top:20px;">Jacob's List v13</p>
             </div>
         </div>
     </div>
@@ -220,21 +210,78 @@
         // SHARE
         function shareList() {
             if (myItems.length === 0) return alert("List is empty!");
-            let text = "🛒 Jacob's List v12\n\n";
+            let text = "🛒 Jacob's List v13\n\n";
             const cats = [...new Set(myItems.map(i => i.category))].sort((a,b) => categoryOrder.indexOf(a) - categoryOrder.indexOf(b));
             cats.forEach(c => { text += `[${c}]\n`; myItems.filter(i => i.category === c).forEach(i => { text += `- ${i.qty>1?`(${i.qty}x) `:''}${i.text}${i.note?` -- ${i.note}`:''}\n`; }); text += "\n"; });
             text += `Total: ${document.getElementById('totalDisplay').innerText}`;
             navigator.clipboard.writeText(text).then(() => alert("List copied to clipboard!"));
         }
 
-        // SCANNER
-        function startScanner() { document.getElementById('scannerModal').style.display = 'flex'; setTimeout(() => { html5QrCode = new Html5Qrcode("reader"); html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, onScanSuccess).catch(err => { alert("Error: Allow camera."); stopScanner(); }); }, 300); }
+        // --- SCANNER FIX V13 ---
+        function startScanner() {
+            document.getElementById('scannerModal').style.display = 'flex';
+            setTimeout(() => {
+                html5QrCode = new Html5Qrcode("reader");
+                // Explicitly ask for 1D Barcodes (UPC/EAN)
+                const config = { 
+                    fps: 10, 
+                    qrbox: { width: 250, height: 150 }, // Flatter box for barcodes
+                    formatsToSupport: [ 
+                        Html5QrcodeSupportedFormats.UPC_A, 
+                        Html5QrcodeSupportedFormats.UPC_E,
+                        Html5QrcodeSupportedFormats.EAN_13,
+                        Html5QrcodeSupportedFormats.EAN_8, 
+                        Html5QrcodeSupportedFormats.QR_CODE 
+                    ]
+                };
+                html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess)
+                .catch(err => { alert("Scanner Error. Ensure good lighting and holding steady."); stopScanner(); });
+            }, 300);
+        }
         function stopScanner() { if (html5QrCode) { html5QrCode.stop().then(() => { document.getElementById('scannerModal').style.display = 'none'; html5QrCode.clear(); }); } else { document.getElementById('scannerModal').style.display = 'none'; } }
         function onScanSuccess(decodedText) { html5QrCode.stop().then(() => { document.getElementById('scannerModal').style.display = 'none'; handleBarcode(decodedText); }); }
-        function handleBarcode(code) { if (barcodeDB[code]) { const item = barcodeDB[code]; nameInput.value = item.name; priceInput.value = item.price; categoryInput.value = item.category; addItem(); alert(`Scanned: ${item.name}`); } else { const name = prompt(`New Barcode!\nName?`); if (name) { barcodeDB[code] = { name: name, price: 0, category: "Pantry" }; localStorage.setItem('jacob_barcodes', JSON.stringify(barcodeDB)); nameInput.value = name; categoryInput.value = "Pantry"; addItem(); } } }
+        function handleBarcode(code) { if (barcodeDB[code]) { const item = barcodeDB[code]; nameInput.value = item.name; priceInput.value = item.price; categoryInput.value = item.category; addItem(); alert(`Scanned: ${item.name}`); } else { const name = prompt(`New Barcode (${code})!\nName?`); if (name) { barcodeDB[code] = { name: name, price: 0, category: "Pantry" }; localStorage.setItem('jacob_barcodes', JSON.stringify(barcodeDB)); nameInput.value = name; categoryInput.value = "Pantry"; addItem(); } } }
 
-        // DICTATION
-        function startDictation() { if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) { const SR = window.SpeechRecognition || window.webkitSpeechRecognition; const r = new SR(); r.lang = 'en-US'; const mb = document.getElementById('micBtn'); mb.classList.add('mic-active'); r.start(); r.onresult = (e) => { nameInput.value = e.results[0][0].transcript.replace(/\.$/, ""); mb.classList.remove('mic-active'); nameInput.focus(); checkHistory(); }; r.onspeechend = () => { r.stop(); mb.classList.remove('mic-active'); }; r.onerror = () => { mb.classList.remove('mic-active'); }; } else { alert("Voice input not supported."); } }
+        // --- DICTATION FIX V13 ---
+        function startDictation() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const r = new SR();
+                r.lang = 'en-US';
+                r.interimResults = false;
+                r.maxAlternatives = 1;
+                
+                const mb = document.getElementById('micBtn');
+                mb.classList.add('mic-active');
+                
+                // SAFETY TIMEOUT: Kill microphone after 8 seconds if no result
+                const safetyTimer = setTimeout(() => {
+                    r.stop();
+                    mb.classList.remove('mic-active');
+                }, 8000);
+
+                r.start();
+                
+                r.onresult = (e) => { 
+                    clearTimeout(safetyTimer); // Clear timeout on success
+                    nameInput.value = e.results[0][0].transcript.replace(/\.$/, ""); 
+                    mb.classList.remove('mic-active'); 
+                    nameInput.focus(); 
+                    checkHistory(); 
+                };
+                
+                r.onspeechend = () => { 
+                    clearTimeout(safetyTimer);
+                    r.stop(); 
+                    mb.classList.remove('mic-active'); 
+                };
+                
+                r.onerror = (e) => { 
+                    clearTimeout(safetyTimer);
+                    mb.classList.remove('mic-active'); 
+                };
+            } else { alert("Voice input not supported."); } 
+        }
 
         // RENDER
         function saveAndRender() { localStorage.setItem('jacob_list_v12', JSON.stringify(myItems)); renderList(); }
