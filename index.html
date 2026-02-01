@@ -33,7 +33,7 @@
         }
         .mic-btn { color: #FF9500; background: rgba(255, 149, 0, 0.2); }
         .scan-btn { color: #FFD60A; background: rgba(255, 214, 10, 0.2); }
-        .share-btn { color: #32D74B; background: rgba(50, 215, 75, 0.2); } /* Added Back */
+        .share-btn { color: #32D74B; background: rgba(50, 215, 75, 0.2); } /* GREEN SHARE BUTTON */
         .settings-btn { color: #8e8e93; background: #2c2c2e; } 
         .mic-active { background: #FF9500 !important; color: white !important; animation: pulse 1s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
@@ -144,7 +144,8 @@
         <div class="header-controls">
             <button class="icon-btn mic-btn" id="micBtn" onclick="startDictation()">🎤</button>
             <button class="icon-btn scan-btn" onclick="startScanner()">⚡️</button>
-            <button class="icon-btn share-btn" onclick="shareList()">⇪</button> <button class="icon-btn" onclick="openRecipeModal()">📖</button>
+            <button class="icon-btn share-btn" onclick="shareList()">⇪</button>
+            <button class="icon-btn" onclick="openRecipeModal()">📖</button>
             <button class="icon-btn settings-btn" onclick="openSettings()">⚙️</button>
         </div>
     </div>
@@ -208,7 +209,6 @@
             </div>
         </div>
     </div>
-    
     <div id="settingsModal" class="modal">
         <div class="modal-content">
             <div class="modal-header"><h2>Settings & Backup</h2><span class="close-modal" onclick="closeSettings()">Done</span></div>
@@ -226,7 +226,6 @@
             </div>
         </div>
     </div>
-
     <div id="editModal" class="modal">
         <div class="modal-content">
             <div class="modal-header"><h2>Edit Item</h2><span class="close-modal" onclick="closeEditModal()">Cancel</span></div>
@@ -290,74 +289,36 @@
         function addItem() {
             const text = nameInput.value.trim();
             if (!text) return;
-            
-            // Update History
             itemHistory[text.toLowerCase()] = { price: parseFloat(priceInput.value) || 0, cat: categoryInput.value };
             localStorage.setItem('jacob_history', JSON.stringify(itemHistory));
-
-            // Duplicate Check
             const existingIndex = myItems.findIndex(i => i.text.toLowerCase() === text.toLowerCase() && !i.checked);
             if (existingIndex > -1) {
                 if(confirm(`"${text}" is already on the list. Add another?`)) {
                     myItems[existingIndex].qty += 1; saveAndRender(); clearInputs(); return; 
                 }
             }
-            myItems.push({ 
-                text: text, 
-                price: parseFloat(priceInput.value) || 0, 
-                qty: parseFloat(qtyInput.value) || 1, 
-                note: noteInput.value.trim(), 
-                category: categoryInput.value, 
-                onSale: false,
-                checked: false 
-            });
+            myItems.push({ text: text, price: parseFloat(priceInput.value) || 0, qty: parseFloat(qtyInput.value) || 1, note: noteInput.value.trim(), category: categoryInput.value, onSale: false, checked: false });
             saveAndRender(); clearInputs();
         }
 
-        function clearInputs() { 
-            nameInput.value = ''; priceInput.value = ''; noteInput.value = ''; qtyInput.value = '1'; priceHint.innerText = ''; nameInput.focus(); 
-        }
+        function clearInputs() { nameInput.value = ''; priceInput.value = ''; noteInput.value = ''; qtyInput.value = '1'; priceHint.innerText = ''; nameInput.focus(); }
 
         function checkHistory() {
             const text = nameInput.value.trim().toLowerCase();
-            if(itemHistory[text]) {
-                const hist = itemHistory[text];
-                priceHint.innerText = `Last paid: $${hist.price.toFixed(2)} (${hist.cat})`;
-            } else {
-                priceHint.innerText = '';
-            }
+            if(itemHistory[text]) { const hist = itemHistory[text]; priceHint.innerText = `Last paid: $${hist.price.toFixed(2)} (${hist.cat})`; } else { priceHint.innerText = ''; }
         }
 
-        // --- SETTINGS & BACKUP ---
+        // --- SETTINGS ---
         function openSettings() {
             const backupData = { items: myItems, recipes: myRecipes, barcodes: barcodeDB, history: itemHistory, tax: taxRate, budget: budgetLimit };
             document.getElementById('backupCode').value = JSON.stringify(backupData);
             document.getElementById('settingsModal').style.display = 'flex';
         }
         function closeSettings() { document.getElementById('settingsModal').style.display = 'none'; }
-        
-        function copyBackup() {
-            const code = document.getElementById('backupCode'); code.select(); document.execCommand('copy'); alert("Backup code copied!");
-        }
-        
-        function loadBackup() {
-            try {
-                const data = JSON.parse(document.getElementById('backupCode').value);
-                if(confirm("Overwrite current list?")) {
-                    myItems = data.items || []; myRecipes = data.recipes || []; barcodeDB = data.barcodes || {};
-                    itemHistory = data.history || {}; taxRate = data.tax || 7.1; budgetLimit = data.budget || 200;
-                    localStorage.setItem('jacob_list_v11', JSON.stringify(myItems));
-                    localStorage.setItem('jacob_recipes_v5', JSON.stringify(myRecipes));
-                    localStorage.setItem('jacob_barcodes', JSON.stringify(barcodeDB));
-                    localStorage.setItem('jacob_history', JSON.stringify(itemHistory));
-                    localStorage.setItem('jacob_tax_rate', taxRate);
-                    localStorage.setItem('jacob_budget', budgetLimit);
-                    alert("Restored!"); renderList(); closeSettings();
-                }
-            } catch(e) { alert("Invalid Code"); }
-        }
+        function copyBackup() { const code = document.getElementById('backupCode'); code.select(); document.execCommand('copy'); alert("Backup code copied!"); }
+        function loadBackup() { try { const data = JSON.parse(document.getElementById('backupCode').value); if(confirm("Overwrite current list?")) { myItems = data.items || []; myRecipes = data.recipes || []; barcodeDB = data.barcodes || {}; itemHistory = data.history || {}; taxRate = data.tax || 7.1; budgetLimit = data.budget || 200; localStorage.setItem('jacob_list_v11', JSON.stringify(myItems)); localStorage.setItem('jacob_recipes_v5', JSON.stringify(myRecipes)); localStorage.setItem('jacob_barcodes', JSON.stringify(barcodeDB)); localStorage.setItem('jacob_history', JSON.stringify(itemHistory)); localStorage.setItem('jacob_tax_rate', taxRate); localStorage.setItem('jacob_budget', budgetLimit); alert("Restored!"); renderList(); closeSettings(); } } catch(e) { alert("Invalid Code"); } }
 
-        // --- SHARE (RESTORED) ---
+        // --- SHARE ---
         function shareList() {
             if (myItems.length === 0) return alert("List is empty!");
             let text = "🛒 Jacob's List\n\n";
@@ -384,29 +345,14 @@
             setTimeout(() => {
                 html5QrCode = new Html5Qrcode("reader");
                 const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-                html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess)
-                .catch(err => { alert("Error: Use HTTPS and allow camera."); stopScanner(); });
+                html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess).catch(err => { alert("Error: Use HTTPS and allow camera."); stopScanner(); });
             }, 300);
         }
-        function stopScanner() {
-            if (html5QrCode) { html5QrCode.stop().then(() => { document.getElementById('scannerModal').style.display = 'none'; html5QrCode.clear(); }).catch(err => console.log(err)); } else { document.getElementById('scannerModal').style.display = 'none'; }
-        }
-        function onScanSuccess(decodedText) {
-            html5QrCode.stop().then(() => {
-                document.getElementById('scannerModal').style.display = 'none'; handleBarcode(decodedText);
-            });
-        }
+        function stopScanner() { if (html5QrCode) { html5QrCode.stop().then(() => { document.getElementById('scannerModal').style.display = 'none'; html5QrCode.clear(); }).catch(err => console.log(err)); } else { document.getElementById('scannerModal').style.display = 'none'; } }
+        function onScanSuccess(decodedText) { html5QrCode.stop().then(() => { document.getElementById('scannerModal').style.display = 'none'; handleBarcode(decodedText); }); }
         function handleBarcode(code) {
-            if (barcodeDB[code]) {
-                const item = barcodeDB[code]; nameInput.value = item.name; priceInput.value = item.price; categoryInput.value = item.category; addItem(); alert(`Scanned: ${item.name}`);
-            } else {
-                const name = prompt(`New Barcode (${code})!\nItem Name?`);
-                if (name) {
-                    barcodeDB[code] = { name: name, price: 0, category: "Pantry" };
-                    localStorage.setItem('jacob_barcodes', JSON.stringify(barcodeDB));
-                    nameInput.value = name; categoryInput.value = "Pantry"; addItem();
-                }
-            }
+            if (barcodeDB[code]) { const item = barcodeDB[code]; nameInput.value = item.name; priceInput.value = item.price; categoryInput.value = item.category; addItem(); alert(`Scanned: ${item.name}`); } 
+            else { const name = prompt(`New Barcode (${code})!\nItem Name?`); if (name) { barcodeDB[code] = { name: name, price: 0, category: "Pantry" }; localStorage.setItem('jacob_barcodes', JSON.stringify(barcodeDB)); nameInput.value = name; categoryInput.value = "Pantry"; addItem(); } }
         }
 
         // --- DICTATION ---
@@ -437,22 +383,11 @@
                         const li = document.createElement('li'); 
                         if (item.checked) li.classList.add('checked');
                         if (item.onSale && !item.checked) li.classList.add('sale-item');
-                        
                         li.onclick = () => toggleCheck(index);
                         const qtyBadge = (item.qty > 1) ? `<span class="qty-badge">${item.qty}x</span>` : '';
                         const noteHTML = item.note ? `<div class="item-note">${item.note}</div>` : '';
                         const saleBadge = item.onSale ? `<span style="color:#32D74B; font-weight:bold; font-size:12px; margin-left:5px;">[SALE]</span>` : '';
-
-                        li.innerHTML = `
-                            <div class="item-info">
-                                <div class="item-top-row">${qtyBadge}<span class="item-name">${item.text}</span>${saleBadge}</div>
-                                ${noteHTML}
-                                <span class="item-price">$${item.price.toFixed(2)} ea</span>
-                            </div>
-                            <div class="action-group">
-                                <button class="edit-btn" onclick="openEditModal(${index}, event)">✏️</button>
-                                <button class="delete-btn" onclick="deleteItem(${index}, event)">✕</button>
-                            </div>`;
+                        li.innerHTML = `<div class="item-info"><div class="item-top-row">${qtyBadge}<span class="item-name">${item.text}</span>${saleBadge}</div>${noteHTML}<span class="item-price">$${item.price.toFixed(2)} ea</span></div><div class="action-group"><button class="edit-btn" onclick="openEditModal(${index}, event)">✏️</button><button class="delete-btn" onclick="deleteItem(${index}, event)">✕</button></div>`;
                         list.appendChild(li);
                     }
                 });
@@ -471,32 +406,11 @@
         function toggleCheck(index) { myItems[index].checked = !myItems[index].checked; saveAndRender(); }
         function deleteItem(index, event) { event.stopPropagation(); myItems.splice(index, 1); saveAndRender(); }
         function clearAll() { if (confirm("Clear list?")) { myItems = []; saveAndRender(); document.getElementById('settingsModal').style.display='none'; } }
-        
         document.getElementById('taxRate').addEventListener('change', (e) => { taxRate = parseFloat(e.target.value) || 0; localStorage.setItem('jacob_tax_rate', taxRate); renderList(); });
         document.getElementById('budgetInput').addEventListener('change', (e) => { budgetLimit = parseFloat(e.target.value) || 0; localStorage.setItem('jacob_budget', budgetLimit); renderList(); });
-        
-        function openEditModal(index, event) { 
-            event.stopPropagation(); editingIndex = index; const item = myItems[index]; 
-            document.getElementById('editName').value = item.text; 
-            document.getElementById('editNote').value = item.note || ''; 
-            document.getElementById('editPrice').value = item.price; 
-            document.getElementById('editQty').value = item.qty; 
-            document.getElementById('editCategory').value = item.category; 
-            document.getElementById('editSale').checked = item.onSale || false;
-            document.getElementById('editModal').style.display = 'flex'; 
-        }
+        function openEditModal(index, event) { event.stopPropagation(); editingIndex = index; const item = myItems[index]; document.getElementById('editName').value = item.text; document.getElementById('editNote').value = item.note || ''; document.getElementById('editPrice').value = item.price; document.getElementById('editQty').value = item.qty; document.getElementById('editCategory').value = item.category; document.getElementById('editSale').checked = item.onSale || false; document.getElementById('editModal').style.display = 'flex'; }
         function closeEditModal() { document.getElementById('editModal').style.display = 'none'; }
-        function saveEdit() { 
-            if (editingIndex === null) return; 
-            myItems[editingIndex].text = document.getElementById('editName').value; 
-            myItems[editingIndex].note = document.getElementById('editNote').value; 
-            myItems[editingIndex].price = parseFloat(document.getElementById('editPrice').value) || 0; 
-            myItems[editingIndex].qty = parseFloat(document.getElementById('editQty').value) || 1; 
-            myItems[editingIndex].category = document.getElementById('editCategory').value; 
-            myItems[editingIndex].onSale = document.getElementById('editSale').checked;
-            saveAndRender(); closeEditModal(); 
-        }
-        
+        function saveEdit() { if (editingIndex === null) return; myItems[editingIndex].text = document.getElementById('editName').value; myItems[editingIndex].note = document.getElementById('editNote').value; myItems[editingIndex].price = parseFloat(document.getElementById('editPrice').value) || 0; myItems[editingIndex].qty = parseFloat(document.getElementById('editQty').value) || 1; myItems[editingIndex].category = document.getElementById('editCategory').value; myItems[editingIndex].onSale = document.getElementById('editSale').checked; saveAndRender(); closeEditModal(); }
         function openRecipeModal() { document.getElementById('recipeModal').style.display = 'flex'; renderRecipes(); }
         function closeRecipeModal() { document.getElementById('recipeModal').style.display = 'none'; }
         function saveCurrentListAsRecipe() { if (myItems.length === 0) return alert("List is empty!"); const name = prompt("Recipe Name:"); if (name) { myRecipes.push({ name: name, items: [...myItems] }); localStorage.setItem('jacob_recipes_v5', JSON.stringify(myRecipes)); renderRecipes(); } }
