@@ -3,80 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jacob's List</title>
+    <title>Jacob's List v12</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="https://img.icons8.com/color/192/000000/checklist.png">
-    
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
     <style>
-        /* Dark Mode Theme */
-        body {
-            background-color: #000000; color: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            margin: 0; padding: 20px 20px 180px 20px;
-            display: flex; flex-direction: column; height: 100vh; box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* Header */
+        body { background-color: #000000; color: #ffffff; font-family: -apple-system, sans-serif; margin: 0; padding: 20px 20px 180px 20px; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        /* HEADER STYLES */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; margin-top: 20px; }
-        h1 { margin: 0; font-size: 24px; font-weight: 800; }
+        h1 { margin: 0; font-size: 24px; font-weight: 800; color: white; } /* Force White Text */
+        
         .header-controls { display: flex; align-items: center; gap: 8px; }
 
-        .icon-btn {
-            background: #1c1c1e; color: #0A84FF; border: none; width: 40px; height: 40px;
-            border-radius: 50%; font-size: 20px; display: flex; justify-content: center; align-items: center; font-weight: bold; cursor: pointer;
-        }
+        .icon-btn { background: #1c1c1e; color: #0A84FF; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 20px; display: flex; justify-content: center; align-items: center; font-weight: bold; cursor: pointer; }
         .mic-btn { color: #FF9500; background: rgba(255, 149, 0, 0.2); }
         .scan-btn { color: #FFD60A; background: rgba(255, 214, 10, 0.2); }
-        .share-btn { color: #32D74B; background: rgba(50, 215, 75, 0.2); } /* GREEN SHARE BUTTON */
+        
+        /* FORCE SHARE BUTTON VISIBILITY */
+        .share-btn { 
+            display: flex !important; 
+            opacity: 1 !important; 
+            visibility: visible !important;
+            color: #32D74B !important; 
+            background: rgba(50, 215, 75, 0.2) !important; 
+        } 
+        
         .settings-btn { color: #8e8e93; background: #2c2c2e; } 
         .mic-active { background: #FF9500 !important; color: white !important; animation: pulse 1s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
-        /* Config */
-        .budget-config {
-            font-size: 13px; color: #8e8e93; background: #1c1c1e; padding: 5px 10px;
-            border-radius: 8px; display: flex; align-items: center; margin-bottom: 10px;
-        }
-        .budget-input {
-            width: 60px; background: transparent; border: none; color: #32D74B;
-            font-weight: bold; text-align: right; font-size: 13px;
-        }
-
-        /* Input Grid */
+        /* INPUTS */
+        .budget-config { font-size: 13px; color: #8e8e93; background: #1c1c1e; padding: 5px 10px; border-radius: 8px; display: flex; align-items: center; margin-bottom: 10px; }
+        .budget-input { width: 60px; background: transparent; border: none; color: #32D74B; font-weight: bold; text-align: right; font-size: 13px; }
         .input-row-1 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 5px; }
         .price-hint { font-size: 11px; color: #0A84FF; margin-bottom: 5px; height: 15px; padding-left: 5px; font-weight: 600; }
         .input-row-notes { margin-bottom: 10px; }
         .input-row-2 { display: grid; grid-template-columns: 70px 1fr 60px; gap: 10px; margin-bottom: 20px; }
-
-        input, select {
-            padding: 12px; border-radius: 12px; border: none; background: #1c1c1e;
-            color: white; font-size: 16px; height: 44px; box-sizing: border-box; width: 100%;
-        }
-        select {
-            appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007AFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-            background-repeat: no-repeat; background-position: right 10px top 50%; background-size: 10px auto;
-            color: #0A84FF; font-weight: 600;
-        }
+        input, select { padding: 12px; border-radius: 12px; border: none; background: #1c1c1e; color: white; font-size: 16px; height: 44px; box-sizing: border-box; width: 100%; }
+        select { appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007AFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 10px top 50%; background-size: 10px auto; color: #0A84FF; font-weight: 600; }
         button#add-btn { background-color: #007AFF; color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 20px; }
 
-        /* List Styling */
+        /* LIST */
         ul { list-style: none; padding: 0; overflow-y: auto; flex-grow: 1; }
-        .category-header {
-            font-size: 14px; font-weight: 800; color: #0A84FF; margin: 20px 0 8px 5px;
-            text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #333; padding-bottom: 5px;
-        }
-        li {
-            background: #1c1c1e; margin-bottom: 8px; padding: 14px; border-radius: 12px;
-            display: flex; justify-content: space-between; align-items: center; border-left: 3px solid transparent;
-        }
+        .category-header { font-size: 14px; font-weight: 800; color: #0A84FF; margin: 20px 0 8px 5px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        li { background: #1c1c1e; margin-bottom: 8px; padding: 14px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid transparent; }
         li.sale-item { border-left: 3px solid #32D74B; background: #1a2e1e; }
-        
         .item-info { display: flex; flex-direction: column; flex-grow: 1; }
         .item-top-row { display: flex; align-items: center; gap: 8px; }
         .qty-badge { background: #333; color: #fff; font-size: 12px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
@@ -89,58 +65,42 @@
         .edit-btn { background: none; border: none; font-size: 18px; cursor: pointer; }
         .delete-btn { background: #3a3a3c; color: #8e8e93; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: 700; font-size: 12px; }
 
-        /* Footer */
+        /* FOOTER */
         .footer-container { position: fixed; bottom: 20px; left: 20px; right: 20px; z-index: 50; }
         .budget-bar-bg { height: 6px; background: #333; border-radius: 3px; margin-bottom: 10px; overflow: hidden; }
         .budget-fill { height: 100%; background: #32D74B; width: 0%; transition: width 0.3s; }
         .over-budget { background: #FF453A; }
-        .total-bar {
-            background: #1c1c1e; padding: 20px; border-radius: 20px; border: 1px solid #333;
-            box-shadow: 0px 10px 30px rgba(0,0,0,0.5); display: flex; justify-content: space-between; align-items: center;
-        }
+        .total-bar { background: #1c1c1e; padding: 20px; border-radius: 20px; border: 1px solid #333; box-shadow: 0px 10px 30px rgba(0,0,0,0.5); display: flex; justify-content: space-between; align-items: center; }
         .total-labels { font-size: 12px; color: #8e8e93; display: flex; flex-direction: column; gap: 4px; }
         .big-total { font-size: 28px; font-weight: 800; color: #32D74B; }
 
-        /* Modals */
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 200; backdrop-filter: blur(5px);
-            padding: 20px; box-sizing: border-box; flex-direction: column; justify-content: center;
-        }
-        .modal-content {
-            background: #1c1c1e; width: 100%; border-radius: 20px; border: 1px solid #333; overflow: hidden;
-            display: flex; flex-direction: column; max-height: 80%; position: relative;
-        }
+        /* MODALS */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 200; backdrop-filter: blur(5px); padding: 20px; box-sizing: border-box; flex-direction: column; justify-content: center; }
+        .modal-content { background: #1c1c1e; width: 100%; border-radius: 20px; border: 1px solid #333; overflow: hidden; display: flex; flex-direction: column; max-height: 80%; position: relative; }
         .modal-header { padding: 20px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
         .modal-header h2 { margin: 0; font-size: 20px; }
         .close-modal { color: #0A84FF; font-weight: bold; cursor: pointer; }
         .modal-body { padding: 20px; overflow-y: auto; }
-        
         #reader { width: 100%; height: 300px; background: black; }
-        
         .save-recipe-btn { width: 100%; padding: 15px; background: #32D74B; color: black; border: none; border-radius: 12px; font-weight: 700; font-size: 16px; margin-bottom: 20px; }
         .recipe-card { background: #2c2c2e; padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         .load-btn { background: #0A84FF; color: white; padding: 8px 12px; border-radius: 8px; border: none; font-weight: 600; }
         .del-recipe-btn { background: #FF453A; color: white; padding: 8px 12px; border-radius: 8px; border: none; font-weight: 600; margin-left: 5px; }
-        
         .edit-field { margin-bottom: 15px; }
         .edit-label { font-size: 12px; color: #8e8e93; margin-bottom: 5px; display: block; }
         .save-edit-btn { width: 100%; padding: 15px; background: #0A84FF; color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 16px; }
-
-        /* Settings Area */
         .backup-area { background: #2c2c2e; padding: 15px; border-radius: 12px; margin-bottom: 20px; }
         .backup-code { width: 100%; background: #000; color: #32D74B; font-family: monospace; border: 1px solid #333; padding: 10px; border-radius: 8px; margin-bottom: 10px; height: 60px; }
         .backup-actions { display: flex; gap: 10px; }
         .action-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
         .copy-btn { background: #32D74B; color: black; }
         .load-backup-btn { background: #FF9500; color: black; }
-
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>Jacob's List</h1>
+        <h1>Jacob's List v12</h1>
         <div class="header-controls">
             <button class="icon-btn mic-btn" id="micBtn" onclick="startDictation()">🎤</button>
             <button class="icon-btn scan-btn" onclick="startScanner()">⚡️</button>
@@ -160,7 +120,6 @@
         <input type="number" id="priceInput" placeholder="Price">
     </div>
     <div id="priceHint" class="price-hint"></div>
-
     <div class="input-row-notes">
         <input type="text" id="noteInput" placeholder="Note..." style="font-size: 14px; color: #FF9500;">
     </div>
@@ -194,19 +153,13 @@
     <div id="scannerModal" class="modal">
         <div class="modal-content">
             <div class="modal-header"><h2>Scan Barcode</h2><span class="close-modal" onclick="stopScanner()">Close</span></div>
-            <div class="modal-body">
-                <div id="reader"></div>
-                <p style="text-align:center; color:#888; margin-top:10px;">Point camera at barcode</p>
-            </div>
+            <div class="modal-body"><div id="reader"></div><p style="text-align:center; color:#888; margin-top:10px;">Point camera at barcode</p></div>
         </div>
     </div>
     <div id="recipeModal" class="modal">
         <div class="modal-content">
             <div class="modal-header"><h2>Recipe Manager</h2><span class="close-modal" onclick="closeRecipeModal()">Done</span></div>
-            <div class="modal-body">
-                <button class="save-recipe-btn" onclick="saveCurrentListAsRecipe()">+ Save Current List as Recipe</button>
-                <div id="recipeListContainer"></div>
-            </div>
+            <div class="modal-body"><button class="save-recipe-btn" onclick="saveCurrentListAsRecipe()">+ Save Current List as Recipe</button><div id="recipeListContainer"></div></div>
         </div>
     </div>
     <div id="settingsModal" class="modal">
@@ -216,13 +169,10 @@
                 <div class="backup-area">
                     <p style="margin-top:0; color:#ccc;">Backup Code (Copy to save):</p>
                     <textarea id="backupCode" class="backup-code"></textarea>
-                    <div class="backup-actions">
-                        <button class="action-btn copy-btn" onclick="copyBackup()">Copy Backup</button>
-                        <button class="action-btn load-backup-btn" onclick="loadBackup()">Load from Code</button>
-                    </div>
+                    <div class="backup-actions"><button class="action-btn copy-btn" onclick="copyBackup()">Copy Backup</button><button class="action-btn load-backup-btn" onclick="loadBackup()">Load from Code</button></div>
                 </div>
                 <button class="action-btn" style="background:#FF453A; color:white; width:100%;" onclick="clearAll()">Clear Entire List</button>
-                <p style="text-align:center; color:#666; font-size:12px; margin-top:20px;">Jacob's List v11.1</p>
+                <p style="text-align:center; color:#666; font-size:12px; margin-top:20px;">Jacob's List v12</p>
             </div>
         </div>
     </div>
@@ -234,189 +184,100 @@
                 <div class="edit-field"><label class="edit-label">Note</label><input type="text" id="editNote"></div>
                 <div class="edit-field"><label class="edit-label">Price</label><input type="number" id="editPrice"></div>
                 <div class="edit-field"><label class="edit-label">Quantity</label><input type="number" id="editQty"></div>
-                <div class="edit-field">
-                    <label class="edit-label">Category</label>
-                    <select id="editCategory">
-                        <option value="Produce">Produce 🥦</option>
-                        <option value="Meat">Meat 🥩</option>
-                        <option value="Pantry">Pantry 🥫</option>
-                        <option value="Dairy">Dairy 🧀</option>
-                        <option value="Frozen">Frozen ❄️</option>
-                        <option value="Household">Household 🏠</option>
-                        <option value="Other">Other 📦</option>
-                    </select>
-                </div>
-                <div class="edit-field" style="display:flex; align-items:center; gap:10px;">
-                    <label class="edit-label" style="margin:0;">On Sale?</label>
-                    <input type="checkbox" id="editSale" style="width:20px; height:20px;">
-                </div>
+                <div class="edit-field"><label class="edit-label">Category</label><select id="editCategory"><option value="Produce">Produce 🥦</option><option value="Meat">Meat 🥩</option><option value="Pantry">Pantry 🥫</option><option value="Dairy">Dairy 🧀</option><option value="Frozen">Frozen ❄️</option><option value="Household">Household 🏠</option><option value="Other">Other 📦</option></select></div>
+                <div class="edit-field" style="display:flex; align-items:center; gap:10px;"><label class="edit-label" style="margin:0;">On Sale?</label><input type="checkbox" id="editSale" style="width:20px; height:20px;"></div>
                 <button class="save-edit-btn" onclick="saveEdit()">Save Changes</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Register SW
         if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); }); }
-
-        // VARS
-        const nameInput = document.getElementById('itemInput');
-        const priceInput = document.getElementById('priceInput');
-        const noteInput = document.getElementById('noteInput');
-        const qtyInput = document.getElementById('qtyInput');
-        const categoryInput = document.getElementById('categoryInput');
-        const list = document.getElementById('shoppingList');
-        const priceHint = document.getElementById('priceHint');
-
-        // DATA
-        let myItems = JSON.parse(localStorage.getItem('jacob_list_v11')) || [];
-        let myRecipes = JSON.parse(localStorage.getItem('jacob_recipes_v5')) || [];
-        let barcodeDB = JSON.parse(localStorage.getItem('jacob_barcodes')) || {};
-        let itemHistory = JSON.parse(localStorage.getItem('jacob_history')) || {};
-        let taxRate = parseFloat(localStorage.getItem('jacob_tax_rate')) || 7.1;
-        let budgetLimit = parseFloat(localStorage.getItem('jacob_budget')) || 200;
-        let editingIndex = null;
-        let html5QrCode;
+        
+        const nameInput = document.getElementById('itemInput'), priceInput = document.getElementById('priceInput'), noteInput = document.getElementById('noteInput'), qtyInput = document.getElementById('qtyInput'), categoryInput = document.getElementById('categoryInput'), list = document.getElementById('shoppingList'), priceHint = document.getElementById('priceHint');
+        let myItems = JSON.parse(localStorage.getItem('jacob_list_v12')) || [], myRecipes = JSON.parse(localStorage.getItem('jacob_recipes_v5')) || [], barcodeDB = JSON.parse(localStorage.getItem('jacob_barcodes')) || {}, itemHistory = JSON.parse(localStorage.getItem('jacob_history')) || {}, taxRate = parseFloat(localStorage.getItem('jacob_tax_rate')) || 7.1, budgetLimit = parseFloat(localStorage.getItem('jacob_budget')) || 200, editingIndex = null, html5QrCode;
         const categoryOrder = ["Produce", "Meat", "Pantry", "Dairy", "Frozen", "Household", "Other"];
+        document.getElementById('taxRate').value = taxRate; document.getElementById('budgetInput').value = budgetLimit; renderList();
 
-        document.getElementById('taxRate').value = taxRate;
-        document.getElementById('budgetInput').value = budgetLimit;
-        renderList();
-
-        // --- CORE FUNCTIONS ---
         document.getElementById('add-btn').addEventListener('click', () => addItem());
-
         function addItem() {
-            const text = nameInput.value.trim();
-            if (!text) return;
-            itemHistory[text.toLowerCase()] = { price: parseFloat(priceInput.value) || 0, cat: categoryInput.value };
-            localStorage.setItem('jacob_history', JSON.stringify(itemHistory));
+            const text = nameInput.value.trim(); if (!text) return;
+            itemHistory[text.toLowerCase()] = { price: parseFloat(priceInput.value) || 0, cat: categoryInput.value }; localStorage.setItem('jacob_history', JSON.stringify(itemHistory));
             const existingIndex = myItems.findIndex(i => i.text.toLowerCase() === text.toLowerCase() && !i.checked);
-            if (existingIndex > -1) {
-                if(confirm(`"${text}" is already on the list. Add another?`)) {
-                    myItems[existingIndex].qty += 1; saveAndRender(); clearInputs(); return; 
-                }
-            }
+            if (existingIndex > -1) { if(confirm(`"${text}" is already on the list. Add another?`)) { myItems[existingIndex].qty += 1; saveAndRender(); clearInputs(); return; } }
             myItems.push({ text: text, price: parseFloat(priceInput.value) || 0, qty: parseFloat(qtyInput.value) || 1, note: noteInput.value.trim(), category: categoryInput.value, onSale: false, checked: false });
             saveAndRender(); clearInputs();
         }
-
         function clearInputs() { nameInput.value = ''; priceInput.value = ''; noteInput.value = ''; qtyInput.value = '1'; priceHint.innerText = ''; nameInput.focus(); }
-
-        function checkHistory() {
-            const text = nameInput.value.trim().toLowerCase();
-            if(itemHistory[text]) { const hist = itemHistory[text]; priceHint.innerText = `Last paid: $${hist.price.toFixed(2)} (${hist.cat})`; } else { priceHint.innerText = ''; }
-        }
-
-        // --- SETTINGS ---
-        function openSettings() {
-            const backupData = { items: myItems, recipes: myRecipes, barcodes: barcodeDB, history: itemHistory, tax: taxRate, budget: budgetLimit };
-            document.getElementById('backupCode').value = JSON.stringify(backupData);
-            document.getElementById('settingsModal').style.display = 'flex';
-        }
+        function checkHistory() { const text = nameInput.value.trim().toLowerCase(); if(itemHistory[text]) { const hist = itemHistory[text]; priceHint.innerText = `Last paid: $${hist.price.toFixed(2)} (${hist.cat})`; } else { priceHint.innerText = ''; } }
+        
+        // SETTINGS
+        function openSettings() { const backupData = { items: myItems, recipes: myRecipes, barcodes: barcodeDB, history: itemHistory, tax: taxRate, budget: budgetLimit }; document.getElementById('backupCode').value = JSON.stringify(backupData); document.getElementById('settingsModal').style.display = 'flex'; }
         function closeSettings() { document.getElementById('settingsModal').style.display = 'none'; }
-        function copyBackup() { const code = document.getElementById('backupCode'); code.select(); document.execCommand('copy'); alert("Backup code copied!"); }
-        function loadBackup() { try { const data = JSON.parse(document.getElementById('backupCode').value); if(confirm("Overwrite current list?")) { myItems = data.items || []; myRecipes = data.recipes || []; barcodeDB = data.barcodes || {}; itemHistory = data.history || {}; taxRate = data.tax || 7.1; budgetLimit = data.budget || 200; localStorage.setItem('jacob_list_v11', JSON.stringify(myItems)); localStorage.setItem('jacob_recipes_v5', JSON.stringify(myRecipes)); localStorage.setItem('jacob_barcodes', JSON.stringify(barcodeDB)); localStorage.setItem('jacob_history', JSON.stringify(itemHistory)); localStorage.setItem('jacob_tax_rate', taxRate); localStorage.setItem('jacob_budget', budgetLimit); alert("Restored!"); renderList(); closeSettings(); } } catch(e) { alert("Invalid Code"); } }
-
-        // --- SHARE ---
+        function copyBackup() { document.getElementById('backupCode').select(); document.execCommand('copy'); alert("Copied!"); }
+        function loadBackup() { try { const data = JSON.parse(document.getElementById('backupCode').value); if(confirm("Overwrite list?")) { myItems = data.items||[]; myRecipes = data.recipes||[]; barcodeDB = data.barcodes||{}; itemHistory = data.history||{}; taxRate = data.tax||7.1; budgetLimit = data.budget||200; localStorage.setItem('jacob_list_v12', JSON.stringify(myItems)); localStorage.setItem('jacob_recipes_v5', JSON.stringify(myRecipes)); localStorage.setItem('jacob_barcodes', JSON.stringify(barcodeDB)); localStorage.setItem('jacob_history', JSON.stringify(itemHistory)); localStorage.setItem('jacob_tax_rate', taxRate); localStorage.setItem('jacob_budget', budgetLimit); alert("Restored!"); renderList(); closeSettings(); } } catch(e) { alert("Invalid Code"); } }
+        
+        // SHARE
         function shareList() {
             if (myItems.length === 0) return alert("List is empty!");
-            let text = "🛒 Jacob's List\n\n";
-            const presentCategories = [...new Set(myItems.map(item => item.category))];
-            presentCategories.sort((a, b) => categoryOrder.indexOf(a) - categoryOrder.indexOf(b));
-            presentCategories.forEach(cat => {
-                text += `[${cat}]\n`;
-                myItems.forEach(item => {
-                    if(item.category === cat) {
-                        const qtyStr = item.qty > 1 ? `(${item.qty}x) ` : '';
-                        const noteStr = item.note ? ` -- ${item.note}` : '';
-                        text += `- ${qtyStr}${item.text}${noteStr}\n`;
-                    }
-                });
-                text += "\n";
-            });
+            let text = "🛒 Jacob's List v12\n\n";
+            const cats = [...new Set(myItems.map(i => i.category))].sort((a,b) => categoryOrder.indexOf(a) - categoryOrder.indexOf(b));
+            cats.forEach(c => { text += `[${c}]\n`; myItems.filter(i => i.category === c).forEach(i => { text += `- ${i.qty>1?`(${i.qty}x) `:''}${i.text}${i.note?` -- ${i.note}`:''}\n`; }); text += "\n"; });
             text += `Total: ${document.getElementById('totalDisplay').innerText}`;
-            navigator.clipboard.writeText(text).then(() => alert("List copied!"));
+            navigator.clipboard.writeText(text).then(() => alert("List copied to clipboard!"));
         }
 
-        // --- SCANNER ---
-        function startScanner() {
-            document.getElementById('scannerModal').style.display = 'flex';
-            setTimeout(() => {
-                html5QrCode = new Html5Qrcode("reader");
-                const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-                html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess).catch(err => { alert("Error: Use HTTPS and allow camera."); stopScanner(); });
-            }, 300);
-        }
-        function stopScanner() { if (html5QrCode) { html5QrCode.stop().then(() => { document.getElementById('scannerModal').style.display = 'none'; html5QrCode.clear(); }).catch(err => console.log(err)); } else { document.getElementById('scannerModal').style.display = 'none'; } }
+        // SCANNER
+        function startScanner() { document.getElementById('scannerModal').style.display = 'flex'; setTimeout(() => { html5QrCode = new Html5Qrcode("reader"); html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, onScanSuccess).catch(err => { alert("Error: Allow camera."); stopScanner(); }); }, 300); }
+        function stopScanner() { if (html5QrCode) { html5QrCode.stop().then(() => { document.getElementById('scannerModal').style.display = 'none'; html5QrCode.clear(); }); } else { document.getElementById('scannerModal').style.display = 'none'; } }
         function onScanSuccess(decodedText) { html5QrCode.stop().then(() => { document.getElementById('scannerModal').style.display = 'none'; handleBarcode(decodedText); }); }
-        function handleBarcode(code) {
-            if (barcodeDB[code]) { const item = barcodeDB[code]; nameInput.value = item.name; priceInput.value = item.price; categoryInput.value = item.category; addItem(); alert(`Scanned: ${item.name}`); } 
-            else { const name = prompt(`New Barcode (${code})!\nItem Name?`); if (name) { barcodeDB[code] = { name: name, price: 0, category: "Pantry" }; localStorage.setItem('jacob_barcodes', JSON.stringify(barcodeDB)); nameInput.value = name; categoryInput.value = "Pantry"; addItem(); } }
-        }
+        function handleBarcode(code) { if (barcodeDB[code]) { const item = barcodeDB[code]; nameInput.value = item.name; priceInput.value = item.price; categoryInput.value = item.category; addItem(); alert(`Scanned: ${item.name}`); } else { const name = prompt(`New Barcode!\nName?`); if (name) { barcodeDB[code] = { name: name, price: 0, category: "Pantry" }; localStorage.setItem('jacob_barcodes', JSON.stringify(barcodeDB)); nameInput.value = name; categoryInput.value = "Pantry"; addItem(); } } }
 
-        // --- DICTATION ---
-        function startDictation() {
-            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                const recognition = new SpeechRecognition();
-                recognition.lang = 'en-US'; recognition.interimResults = false; recognition.maxAlternatives = 1;
-                const micBtn = document.getElementById('micBtn'); micBtn.classList.add('mic-active');
-                recognition.start();
-                recognition.onresult = function(event) { nameInput.value = event.results[0][0].transcript.replace(/\.$/, ""); micBtn.classList.remove('mic-active'); nameInput.focus(); checkHistory(); };
-                recognition.onspeechend = function() { recognition.stop(); micBtn.classList.remove('mic-active'); };
-                recognition.onerror = function(event) { micBtn.classList.remove('mic-active'); alert('Voice error: ' + event.error); };
-            } else { alert("Voice input not supported."); }
-        }
+        // DICTATION
+        function startDictation() { if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) { const SR = window.SpeechRecognition || window.webkitSpeechRecognition; const r = new SR(); r.lang = 'en-US'; const mb = document.getElementById('micBtn'); mb.classList.add('mic-active'); r.start(); r.onresult = (e) => { nameInput.value = e.results[0][0].transcript.replace(/\.$/, ""); mb.classList.remove('mic-active'); nameInput.focus(); checkHistory(); }; r.onspeechend = () => { r.stop(); mb.classList.remove('mic-active'); }; r.onerror = () => { mb.classList.remove('mic-active'); }; } else { alert("Voice input not supported."); } }
 
-        // --- RENDER ---
-        function saveAndRender() { localStorage.setItem('jacob_list_v11', JSON.stringify(myItems)); renderList(); }
+        // RENDER
+        function saveAndRender() { localStorage.setItem('jacob_list_v12', JSON.stringify(myItems)); renderList(); }
         function renderList() {
-            list.innerHTML = ''; let subtotal = 0;
-            const presentCategories = [...new Set(myItems.map(item => item.category))];
-            presentCategories.sort((a, b) => categoryOrder.indexOf(a) - categoryOrder.indexOf(b));
-            presentCategories.forEach(cat => {
-                const header = document.createElement('div'); header.className = 'category-header'; header.innerText = cat; list.appendChild(header);
+            list.innerHTML = ''; let sub = 0;
+            const cats = [...new Set(myItems.map(i => i.category))].sort((a,b) => categoryOrder.indexOf(a) - categoryOrder.indexOf(b));
+            cats.forEach(c => {
+                const h = document.createElement('div'); h.className = 'category-header'; h.innerText = c; list.appendChild(h);
                 myItems.forEach((item, index) => {
-                    if (item.category === cat) {
-                        subtotal += (item.price * (item.qty || 1));
-                        const li = document.createElement('li'); 
-                        if (item.checked) li.classList.add('checked');
-                        if (item.onSale && !item.checked) li.classList.add('sale-item');
+                    if (item.category === c) {
+                        sub += (item.price * (item.qty || 1));
+                        const li = document.createElement('li'); if (item.checked) li.classList.add('checked'); if (item.onSale && !item.checked) li.classList.add('sale-item');
                         li.onclick = () => toggleCheck(index);
-                        const qtyBadge = (item.qty > 1) ? `<span class="qty-badge">${item.qty}x</span>` : '';
-                        const noteHTML = item.note ? `<div class="item-note">${item.note}</div>` : '';
-                        const saleBadge = item.onSale ? `<span style="color:#32D74B; font-weight:bold; font-size:12px; margin-left:5px;">[SALE]</span>` : '';
-                        li.innerHTML = `<div class="item-info"><div class="item-top-row">${qtyBadge}<span class="item-name">${item.text}</span>${saleBadge}</div>${noteHTML}<span class="item-price">$${item.price.toFixed(2)} ea</span></div><div class="action-group"><button class="edit-btn" onclick="openEditModal(${index}, event)">✏️</button><button class="delete-btn" onclick="deleteItem(${index}, event)">✕</button></div>`;
+                        li.innerHTML = `<div class="item-info"><div class="item-top-row">${item.qty>1?`<span class="qty-badge">${item.qty}x</span>`:''}<span class="item-name">${item.text}</span>${item.onSale?`<span style="color:#32D74B;font-weight:bold;font-size:12px;margin-left:5px;">[SALE]</span>`:''}</div>${item.note?`<div class="item-note">${item.note}</div>`:''}<span class="item-price">$${item.price.toFixed(2)} ea</span></div><div class="action-group"><button class="edit-btn" onclick="openEditModal(${index}, event)">✏️</button><button class="delete-btn" onclick="deleteItem(${index}, event)">✕</button></div>`;
                         list.appendChild(li);
                     }
                 });
             });
-            updateTotals(subtotal);
+            updateTotals(sub);
         }
-        function updateTotals(subtotal) {
-            const taxAmount = subtotal * (taxRate / 100); const total = subtotal + taxAmount;
-            document.getElementById('subtotalDisplay').innerText = `Sub: $${subtotal.toFixed(2)}`;
-            document.getElementById('taxDisplay').innerText = `Tax: $${taxAmount.toFixed(2)}`;
+        function updateTotals(sub) {
+            const tax = sub * (taxRate / 100); const total = sub + tax;
+            document.getElementById('subtotalDisplay').innerText = `Sub: $${sub.toFixed(2)}`;
+            document.getElementById('taxDisplay').innerText = `Tax: $${tax.toFixed(2)}`;
             document.getElementById('totalDisplay').innerText = `$${total.toFixed(2)}`;
-            const percent = Math.min((total / budgetLimit) * 100, 100); const bar = document.getElementById('budgetFill');
-            bar.style.width = percent + "%"; if (total > budgetLimit) bar.classList.add('over-budget'); else bar.classList.remove('over-budget');
+            const pct = Math.min((total / budgetLimit) * 100, 100); const bar = document.getElementById('budgetFill');
+            bar.style.width = pct + "%"; if (total > budgetLimit) bar.classList.add('over-budget'); else bar.classList.remove('over-budget');
         }
 
-        function toggleCheck(index) { myItems[index].checked = !myItems[index].checked; saveAndRender(); }
-        function deleteItem(index, event) { event.stopPropagation(); myItems.splice(index, 1); saveAndRender(); }
+        function toggleCheck(i) { myItems[i].checked = !myItems[i].checked; saveAndRender(); }
+        function deleteItem(i, e) { e.stopPropagation(); myItems.splice(i, 1); saveAndRender(); }
         function clearAll() { if (confirm("Clear list?")) { myItems = []; saveAndRender(); document.getElementById('settingsModal').style.display='none'; } }
-        document.getElementById('taxRate').addEventListener('change', (e) => { taxRate = parseFloat(e.target.value) || 0; localStorage.setItem('jacob_tax_rate', taxRate); renderList(); });
-        document.getElementById('budgetInput').addEventListener('change', (e) => { budgetLimit = parseFloat(e.target.value) || 0; localStorage.setItem('jacob_budget', budgetLimit); renderList(); });
-        function openEditModal(index, event) { event.stopPropagation(); editingIndex = index; const item = myItems[index]; document.getElementById('editName').value = item.text; document.getElementById('editNote').value = item.note || ''; document.getElementById('editPrice').value = item.price; document.getElementById('editQty').value = item.qty; document.getElementById('editCategory').value = item.category; document.getElementById('editSale').checked = item.onSale || false; document.getElementById('editModal').style.display = 'flex'; }
+        document.getElementById('taxRate').addEventListener('change', (e) => { taxRate = parseFloat(e.target.value)||0; localStorage.setItem('jacob_tax_rate', taxRate); renderList(); });
+        document.getElementById('budgetInput').addEventListener('change', (e) => { budgetLimit = parseFloat(e.target.value)||0; localStorage.setItem('jacob_budget', budgetLimit); renderList(); });
+        function openEditModal(i, e) { e.stopPropagation(); editingIndex = i; const it = myItems[i]; document.getElementById('editName').value = it.text; document.getElementById('editNote').value = it.note||''; document.getElementById('editPrice').value = it.price; document.getElementById('editQty').value = it.qty; document.getElementById('editCategory').value = it.category; document.getElementById('editSale').checked = it.onSale||false; document.getElementById('editModal').style.display = 'flex'; }
         function closeEditModal() { document.getElementById('editModal').style.display = 'none'; }
-        function saveEdit() { if (editingIndex === null) return; myItems[editingIndex].text = document.getElementById('editName').value; myItems[editingIndex].note = document.getElementById('editNote').value; myItems[editingIndex].price = parseFloat(document.getElementById('editPrice').value) || 0; myItems[editingIndex].qty = parseFloat(document.getElementById('editQty').value) || 1; myItems[editingIndex].category = document.getElementById('editCategory').value; myItems[editingIndex].onSale = document.getElementById('editSale').checked; saveAndRender(); closeEditModal(); }
+        function saveEdit() { if (editingIndex === null) return; myItems[editingIndex].text = document.getElementById('editName').value; myItems[editingIndex].note = document.getElementById('editNote').value; myItems[editingIndex].price = parseFloat(document.getElementById('editPrice').value)||0; myItems[editingIndex].qty = parseFloat(document.getElementById('editQty').value)||1; myItems[editingIndex].category = document.getElementById('editCategory').value; myItems[editingIndex].onSale = document.getElementById('editSale').checked; saveAndRender(); closeEditModal(); }
         function openRecipeModal() { document.getElementById('recipeModal').style.display = 'flex'; renderRecipes(); }
         function closeRecipeModal() { document.getElementById('recipeModal').style.display = 'none'; }
-        function saveCurrentListAsRecipe() { if (myItems.length === 0) return alert("List is empty!"); const name = prompt("Recipe Name:"); if (name) { myRecipes.push({ name: name, items: [...myItems] }); localStorage.setItem('jacob_recipes_v5', JSON.stringify(myRecipes)); renderRecipes(); } }
-        function loadRecipe(index) { if (confirm("Load recipe?")) { myItems = myItems.concat(myRecipes[index].items); saveAndRender(); closeRecipeModal(); } }
-        function deleteRecipe(index) { if (confirm("Delete recipe?")) { myRecipes.splice(index, 1); localStorage.setItem('jacob_recipes_v5', JSON.stringify(myRecipes)); renderRecipes(); } }
-        function renderRecipes() { const container = document.getElementById('recipeListContainer'); container.innerHTML = ''; myRecipes.forEach((recipe, index) => { const div = document.createElement('div'); div.className = 'recipe-card'; div.innerHTML = `<div><div class="recipe-name">${recipe.name}</div></div><div><button class="load-btn" onclick="loadRecipe(${index})">Load</button><button class="del-recipe-btn" onclick="deleteRecipe(${index})">✕</button></div>`; container.appendChild(div); }); }
+        function saveCurrentListAsRecipe() { if (myItems.length === 0) return alert("Empty!"); const n = prompt("Name:"); if (n) { myRecipes.push({ name: n, items: [...myItems] }); localStorage.setItem('jacob_recipes_v5', JSON.stringify(myRecipes)); renderRecipes(); } }
+        function loadRecipe(i) { if (confirm("Load?")) { myItems = myItems.concat(myRecipes[i].items); saveAndRender(); closeRecipeModal(); } }
+        function deleteRecipe(i) { if (confirm("Delete?")) { myRecipes.splice(i, 1); localStorage.setItem('jacob_recipes_v5', JSON.stringify(myRecipes)); renderRecipes(); } }
+        function renderRecipes() { const c = document.getElementById('recipeListContainer'); c.innerHTML = ''; myRecipes.forEach((r, i) => { const d = document.createElement('div'); d.className = 'recipe-card'; d.innerHTML = `<div><div class="recipe-name">${r.name}</div></div><div><button class="load-btn" onclick="loadRecipe(${i})">Load</button><button class="del-recipe-btn" onclick="deleteRecipe(${i})">✕</button></div>`; c.appendChild(d); }); }
     </script>
 </body>
 </html>
